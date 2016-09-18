@@ -1,4 +1,4 @@
-# SFM_with_OpticalFlow
+#3D Reconstruction
 Extract 3D informations performing Structure From Motion reconstruction using OpenCV libs.
 "Feature Matching" will be computed using Optical Flow.
 
