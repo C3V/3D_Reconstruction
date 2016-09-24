@@ -1,5 +1,4 @@
-/*
- * Calibration.cpp
+* Calibration.cpp
  *
  *  Created on: 23/set/2016
  *      Author: trev
@@ -80,7 +79,7 @@ void Calibration::resetImageIndex(){
 double Calibration::calibrate(Mat* cameraMatrix, Mat* distCoeffs, vector<Mat>* rvecs,
 		                      vector<Mat>* tvecs ,Size boardSize, vector<Point2f> currentCorners,
 							  vector<Point3f> obj, int n_Snaps){
-    Size imageSize;
+    //Size imageSize;
     vector<vector<Point3f> > objectPoints; //3D coordinates of the corners for every snap (world)
     vector<vector<Point2f> > imagePoints; //2D coordinates of the corners for every snap (image)
     int successes=0;
