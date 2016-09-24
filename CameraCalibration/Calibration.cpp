@@ -19,7 +19,7 @@ using namespace std;
 
 using namespace std;
 using namespace cv;
-
+ 
 Calibration::Calibration() {
 
 	imageIndex=0;
