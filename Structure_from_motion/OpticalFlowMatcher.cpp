@@ -233,7 +233,7 @@ vector<DMatch> OpticalFlowMatcher::matchFeatures(Mat firstImage, Mat secondImage
     //in nearest_neighbors there are one or more matches for every right_point_to_find
     //but there can be only one right feature point for every left feature point moved (motion
     //estimated by OF), so throw away neighbors that are too closer together as they might
-    //be confusing.
+    //be confusing
 
     //N.B. _m substituted with _m1 to allow clear of the vector after the computation
     int index = 0;
@@ -294,4 +294,5 @@ vector<DMatch> OpticalFlowMatcher::matchFeatures(Mat firstImage, Mat secondImage
     return *matches;
 
 } //matchFeatures
+
 
