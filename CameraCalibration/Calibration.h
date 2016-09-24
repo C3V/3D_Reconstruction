@@ -1,5 +1,4 @@
-/*
- * Calibration.h
+* Calibration.h
  *
  *  Created on: 23/set/2016
  *      Author: trev
@@ -28,9 +27,12 @@ public:
 
 	void resetImageIndex();
 
+	//calibrate camera, i.e. found camera matrix, distorion coefficients, rotation and
+	//translation vectors and return the re-projection error
 	double calibrate(Mat* cameraMatrix, Mat* distCoeffs, vector<Mat>* rvecs, vector<Mat>* tvecs,
 			         Size boardSize, vector<Point2f> currentCorners, vector<Point3f> obj, int n_Snaps);
 
+	Size imageSize;
 
 private:
 	//contains calibration images' names
