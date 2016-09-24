@@ -16,6 +16,11 @@ using namespace std;
 
 int main(int argc, char** argv){
 
+	if(argc < 2){
+		cout<<"error! no configuration file in input"<<endl;
+		return 1;
+	}
+
 	int n_Snaps=0; //number of chessboard images
 	int n_internalCornersH; //internal horizontal corners
 	int n_internalCornersV; //internal vertical corners
@@ -58,6 +63,8 @@ int main(int argc, char** argv){
     vector<Mat> rvecs; //rotation vector
     vector<Mat> tvecs; //translation vector
 
+    //calibrate camera, i.e. found camera matrix, distorion coefficients, rotation and
+    //translation vectors and return the re-projection error
     re_projectionError = calibrator.calibrate(&cameraMatrix, &distCoeffs, &rvecs, &tvecs,
     		                                  boardSize, currentCorners, obj, n_Snaps);
 
@@ -66,6 +73,23 @@ int main(int argc, char** argv){
     cout<<"cameraMatrix= "<<cameraMatrix<<endl;cout<<endl;
     cout<<"distortion coefficients vector has size: "<<distCoeffs.size()<<endl;
     cout<<"distCoeffs= "<<distCoeffs<<endl;cout<<endl;
+
+    //writing calibration matrix to configuration.xml
+    string filename = argv[1]; //read config. file
+    FileStorage fs(filename, FileStorage::WRITE); //write mode
+    //write
+    cout<<endl;cout<<"writing K to configuration.xml"<<endl;
+    fs<<"K"<<cameraMatrix;
+    fs.release();
+    cout<<"writing done"<<endl;
+
+    /*//reading
+    Mat K;
+    cout<<"reading"<<endl;
+    fs.open(filename, FileStorage::READ);
+    fs["K"] >>K;
+    cout<<"K= "<<K<<endl<<endl;
+    fs.release();*/
 
     //undistort some image
     Mat distorted = imread("images/storta.jpg");
@@ -78,4 +102,18 @@ int main(int argc, char** argv){
     imshow("undistorted", undistorted);
     waitKey(0);
     return 0;
+    /*
+    //show "black points" on undistorted image
+    Mat view, rview, map1, map2;
+    Size imageSize = calibrator.imageSize;
+    initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(),
+                            getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, 1,
+                            imageSize, 0), imageSize, CV_16SC2, map1, map2);
+    view = imread("images/storta.jpg");
+    remap(view, rview, map1, map2, INTER_LINEAR);
+    namedWindow("undistorted", CV_WINDOW_AUTOSIZE);
+    imshow("undistorted", rview);
+    waitKey(0);
+    */
 }
+
