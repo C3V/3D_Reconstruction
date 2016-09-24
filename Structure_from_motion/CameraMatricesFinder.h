@@ -22,7 +22,7 @@ public:
 
 	void convertToPoint2f(vector<DMatch> matches, vector<KeyPoint> keypoints_left, vector<KeyPoint> keypoints_right);
 
-	Mat findMatrixE(vector<DMatch> matches, vector<KeyPoint> keypoints_1, vector<KeyPoint> keypoints_2);
+	Mat findMatrixE(vector<DMatch> matches, vector<KeyPoint> keypoints_1, vector<KeyPoint> keypoints_2, Mat K);
 
 private:
 
