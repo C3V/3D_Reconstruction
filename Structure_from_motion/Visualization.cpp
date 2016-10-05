@@ -99,7 +99,7 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
 	    cout<<"press q to exit window"<<endl;
 	    myWindow.spin(); //no point of view-->explore the 3D structure of the scene
 	    myWindow.setViewerPose(path[2]); //simulated global point of view
-	    myWindow.spin(); //no point of view
+	    myWindow.spin(); 
 	    myWindow.setViewerPose(path[1]); //point of view of the right camera
 	    myWindow.spin();
 
