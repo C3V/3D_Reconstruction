@@ -35,7 +35,7 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
 		   points[i].y != points[i].y || isnan(points[i].y) ||
 		   points[i].z != points[i].z || isnan(points[i].z) ||
 		   points[i].z <0 || fabsf(points[i].x) > 10.0 || fabsf(points[i].y) > 10.0 ||
-		   fabsf(points[i].z) > 10.0 || repr_err[i] > 6.0){  //N.B. re-projection error
+		   fabsf(points[i].z) > 10.0 || repr_err[i] > 8.0){  //N.B. re-projection error
 			continue;
 		}
 
@@ -44,7 +44,7 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
 
 	} cout<<"done."<<endl;
 
-	cout<<"filtered 3D points (erroneous coordinates): "<<point_cloud.size()<<endl;
+	cout<<"filtered 3D points (after discarding of points with erroneous coordinates): "<<point_cloud.size()<<endl;
 
 	cout<<endl;cout << "recovering cameras... "<<endl;
 
@@ -59,7 +59,7 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
 	Matx31d t(P(0,3),
 		      P(1,3),
 			  P(2,3));
-	cout<<"R= "<<R<<endl;cout<<" t= "<<t<<endl;
+	//cout<<"R= "<<R<<endl;cout<<" t= "<<t<<endl;
 
 	Matx33d R1(P1(0,0), P1(0,1), P1(0,2),
 			   P1(1,0), P1(1,1), P1(1,2),
@@ -68,7 +68,7 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
 			   P1(1,3),
 			   P1(2,3));
 
-	cout<<"R1= "<<R1<<endl;cout<<"t1= "<<t1<<endl;
+	//cout<<"R1= "<<R1<<endl;cout<<"t1= "<<t1<<endl;
 
     vector<Affine3d> path;
 
@@ -137,6 +137,9 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
     }
 
 }
+
+
+
 
 
 
