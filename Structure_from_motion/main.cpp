@@ -1,3 +1,4 @@
+
 /*
  * main.cpp
  *
@@ -40,7 +41,7 @@ int main(int argc, char** argv){
 	cout<<endl;cout<<"reading camera matrix of intrinsic parameters from configuration.xml: "<<endl;
 	fs.open(filename, FileStorage::READ);
 	fs["K"]>>K;
-	cout<<"K= "<<K<<endl;
+	cout<<"K= "<<K<<endl;cout<<endl;
 	cout<<"reading distortion coefficients:"<<endl;
 	fs["distortion_coeff"]>>distortion_coeff;
 	cout<<"distortion_coeff= "<<distortion_coeff<<endl;
@@ -51,11 +52,14 @@ int main(int argc, char** argv){
 	//with 7.0/1/2 the incremental works(maybe!) and adds just 1 POINT (!) to baseline cloud
 	//(9.1,9.2,9.3 ) (10.1/4) (11.1/4)-->best one with 4 views
 	vector<Mat> imgs; //storage vector, pass it to IncrementalReconstruction
-	Mat firstImage, secondImage, thirdImage, fourthImage;
+	Mat firstImage, secondImage, thirdImage, fourthImage, fifthImage;
 	firstImage = imread("images/11.1.jpg"); imgs.push_back(firstImage);
 	secondImage = imread("images/11.2.jpg"); imgs.push_back(secondImage);
 	thirdImage = imread("images/11.3.jpg"); imgs.push_back(thirdImage);
 	fourthImage = imread("images/11.4.jpg"); imgs.push_back(fourthImage);
+	//fifthImage = imread("images/12.5.jpg"); imgs.push_back(fifthImage);
+
+	cout<<"\nobtained "<<imgs.size()<<" images to perform reconstruction"<<endl;
 
 	{ //incremental reconstruction
 	IncrementalReconstruction i_rec;
@@ -149,14 +153,18 @@ int main(int argc, char** argv){
     //(avoid creating unnecessary objects)
 
     //TODO implement matcher.clearFields(); inside the if(dense) else...
-    cout<<endl;
+*/    cout<<endl;
     cout<<"program ends"<<endl;
 
     //TODO ?mettere tutto in una sola funzione che calcola le coordinate 3D?
 
 
-*/
+
 }
+
+
+
+
 
 
 
