@@ -21,7 +21,8 @@ public:
 
 	void visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34d P1,vector<Mat_<double> > R_,
 			               vector<Mat_<double> > t_, map< int , Mat_<double> > camera_Rs,
-						   map< int , Mat_<double> > camera_ts, Mat K, vector<double> repr_err);
+						   map< int , Mat_<double> > camera_ts, Mat K,map<int,cv::Matx34d>& Pmats,
+						   vector<double> repr_err);
 
 private:
 
@@ -29,3 +30,4 @@ private:
 
 
 #endif /* SRC_VISUALIZATION_H_ */
+
