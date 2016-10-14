@@ -137,7 +137,8 @@ Mat FindCameraMatrices::getFundamentalMat(const vector<KeyPoint>& keypoints_left
     matches = new_matches; //keep only those points who survived the fundamental matrix
     cout<<endl;cout<<endl;
     cout<<"FIRST PRUNED MATCH: matches[0].trainIdx= "<<matches[0].trainIdx<<endl; //debug
-	return F;
+	cout<<endl;
+    return F;
 }
 
 void FindCameraMatrices::SVDofE(Mat_<double>& E, Mat& svd_u, Mat& svd_vt, Mat& svd_w){
@@ -332,7 +333,7 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 					 R1(1,0),	R1(1,1),	R1(1,2),	t2(1),
 					 R1(2,0),	R1(2,1),	R1(2,2),	t2(2));
 
-	    cout << "Testing P1 "<< endl << Mat(P1) << endl;
+	    cout<<endl;cout << "Testing P1 "<< endl << Mat(P1) << endl;
 	    index=2;
 	    pointcloud.clear(); pointcloud1.clear();
 	    pcloud.clear(); pcloud1.clear();
@@ -354,7 +355,7 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 	    				 R2(1,0),	R2(1,1),	R2(1,2),	t1(1),
 	    				 R2(2,0),	R2(2,1),	R2(2,2),	t1(2));
 
-	    	cout << "Testing P1 "<< endl << Mat(P1) << endl;
+	    	cout << "\nTesting P1 "<< endl << Mat(P1) << endl;
 	    	index=3;
 	    	pointcloud.clear(); pointcloud1.clear();
 	    	pcloud.clear(); pcloud1.clear();
@@ -369,7 +370,7 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 	    					 R2(1,0),	R2(1,1),	R2(1,2),	t2(1),
 	    			         R2(2,0),	R2(2,1),	R2(2,2),	t2(2));
 
-	    		cout << "Testing P1 "<< endl << Mat(P1) << endl;
+	    		cout << "\nTesting P1 "<< endl << Mat(P1) << endl;
 	    		index=4;
 	    		pointcloud.clear(); pointcloud1.clear();
 	    		pcloud.clear(); pcloud1.clear();
@@ -405,6 +406,13 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 
 	return true;
 }
+
+
+
+
+
+
+
 
 
 
