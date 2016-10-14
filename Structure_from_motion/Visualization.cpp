@@ -10,7 +10,7 @@
 void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34d P1,
 		                               vector<Mat_<double> > R_, vector<Mat_<double> > t_,
 									   map< int , Mat_<double> > camera_Rs, map< int , Mat_<double> > camera_ts,
-		                               Mat K, vector<double> repr_err){
+		                               Mat K,map<int,cv::Matx34d>& Pmats, vector<double> repr_err){
 
 	// Create a window
 	viz::Viz3d myWindow("Coordinate Frame");
@@ -53,7 +53,7 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
      * translation matrices, so:
      * P=[I|0]-->R=[I], t=[0] and P1=[R|t]-->R1=[R], t1=[t]
      */
-	Matx33d R(P(0,0), P(0,1), P(0,2),
+/*	Matx33d R(P(0,0), P(0,1), P(0,2),
 		      P(1,0), P(1,1), P(1,2),
 			  P(2,0), P(2,1), P(2,2));
 	Matx31d t(P(0,3),
@@ -76,8 +76,20 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
     path.push_back( Affine3d( Mat(R), Mat(t) ) ); //need to cast to Mat (don't know why)
     path.push_back( Affine3d( Mat(R1), Mat(t1) ) );
 
+
     for(unsigned int i=0; i < R_.size(); i++){ //pushing incremental camera position
           	path.push_back(Affine3d( Mat(R_[i]), Mat(t_[i]) ) );
+    }
+*/
+	vector<Affine3d> path;
+    for(unsigned int i=0;i<Pmats.size(); i++){
+    	Matx33d Ri(Pmats[i](0,0), Pmats[i](0,1), Pmats[i](0,2),
+    			   Pmats[i](1,0), Pmats[i](1,1), Pmats[i](1,2),
+    			   Pmats[i](2,0), Pmats[i](2,1), Pmats[i](2,2));
+    	Matx31d ti(Pmats[i](0,3),
+    			   Pmats[i](1,3),
+    			   Pmats[i](2,3));
+    	path.push_back( Affine3d( Mat(Ri), Mat(ti) ) ); //need to cast to Mat (don't know why)
     }
 
 
@@ -103,7 +115,7 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
 	if ( path.size() > 0 )
     {
         cout<<endl;cout << "rendering Cameras  ... ";
-	    //myWindow.showWidget("cameras_frames_and_lines", viz::WTrajectory(path, viz::WTrajectory::BOTH, 0.1, viz::Color::green()));
+	    myWindow.showWidget("cameras_frames_and_lines", viz::WTrajectory(path, viz::WTrajectory::BOTH, 0.1, viz::Color::green()));
 	    myWindow.showWidget("cameras_frustums", viz::WTrajectoryFrustums(path, Matx33d(K), 0.1, viz::Color::yellow()));
 
 	    /*
@@ -137,6 +149,9 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
     }
 
 }
+
+
+
 
 
 
