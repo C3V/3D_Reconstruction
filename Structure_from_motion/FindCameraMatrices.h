@@ -10,6 +10,7 @@
 
 #include <cv.h>
 #include <highgui.h>
+#include "Common.h"
 
 using namespace cv;
 using namespace std;
@@ -23,7 +24,7 @@ public:
 
 	Mat getFundamentalMat(const vector<KeyPoint>& keypoints_left,
 			const vector<KeyPoint>& keypoints_right, vector<KeyPoint>& keypoints_left_good,
-			vector<KeyPoint>& keypoints_right_good, vector<DMatch>& matches);
+			vector<KeyPoint>& keypoints_right_good, vector<DMatch>& matches, bool dense);
 
 	bool CheckCoherentRotation(Mat_<double>& R);
 
@@ -39,7 +40,8 @@ public:
 	bool findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& keypoints_left,
 			vector<KeyPoint>& keypoints_right, vector<KeyPoint>& keypoints_left_good,
 			vector<KeyPoint>& keypoints_right_good, Matx34d& P, Matx34d& P1, vector<DMatch>& matches,
-			vector<Point3d>& outCloud);
+			vector<Point3d>& outCloud, vector<CloudPoint>& p_cloud, bool dense,
+			vector<double>& repr_err);
 
 private:
 
@@ -50,3 +52,4 @@ private:
 
 
 #endif /* SRC_FINDCAMERAMATRICES_H_ */
+
