@@ -138,13 +138,19 @@ double Triangulation::triangulatePoints(vector<KeyPoint> keypoints1, //first "pr
 	//return mean reprojection error
 	Scalar mean_error = mean(reproj_error);
 
-	cout<<endl;cout<<"-------------------------------------------------------------------------------------------"<<endl;
+	//cout<<endl;cout<<"-------------------------------------------------------------------------------------------"<<endl;
 	//cout<<"Done ("<<pointcloud.size()<<" points, " <<" mean re-projection err = " << mean_error[0] << ")."<< endl;
 	cout<<"Done ("<<pcloud.size()<<" points, " <<" mean re-projection err = " << mean_error[0] << ")."<< endl;
 
 	return mean_error[0];
 
 }
+
+
+
+
+
+
 
 
 
