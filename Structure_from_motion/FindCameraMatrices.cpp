@@ -10,6 +10,7 @@
 #include "FindCameraMatrices.h"
 #include "Triangulation.h"
 
+
 #include <opencv2/video/video.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/gpu/gpu.hpp>
@@ -74,7 +75,12 @@ void FindCameraMatrices::KeyPointsToPoints(vector<KeyPoint> keypoints, vector<Po
  */
 Mat FindCameraMatrices::getFundamentalMat(const vector<KeyPoint>& keypoints_left,
 		const vector<KeyPoint>& keypoints_right, vector<KeyPoint>& keypoints_left_good,
-		vector<KeyPoint>& keypoints_right_good, vector<DMatch>& matches){
+		vector<KeyPoint>& keypoints_right_good, vector<DMatch>& matches, bool dense){
+
+	//bool dense = true;
+	cout<<"keypoints_left.size()= "<<keypoints_left.size()<<endl;
+	cout<<"keypoints_right.size()= "<<keypoints_right.size()<<endl;
+	cout<<"matches.size()= "<<matches.size()<<endl;
 
 	//we will not consider points that were not used to compute F
 	vector<uchar> status(keypoints_left.size());
@@ -89,10 +95,18 @@ Mat FindCameraMatrices::getFundamentalMat(const vector<KeyPoint>& keypoints_left
 	vector<KeyPoint> imgpts1_tmp;
 	vector<KeyPoint> imgpts2_tmp;
 
-	alignMatches(keypoints_left, keypoints_right, matches, &imgpts1_tmp, &imgpts2_tmp);
+	//if dese reconstruction, take directly two KeyPoint vectors, otherwise align the match vector
+	//coming from sparse matching
+	if(dense){
+		imgpts1_tmp = keypoints_left;
+		imgpts2_tmp = keypoints_right;
+	}
+	else
+		alignMatches(keypoints_left, keypoints_right, matches, &imgpts1_tmp, &imgpts2_tmp);
 
 	KeyPointsToPoints(imgpts1_tmp, &pts1);
 	KeyPointsToPoints(imgpts2_tmp, &pts2);
+
     /*
 	cout<<"first keypoint in match: "<<keypoints_left[matches[1].queryIdx].pt<<endl;
 	cout<<"correspondent keypoint: "<<keypoints_right[matches[1].trainIdx].pt<<endl;
@@ -115,12 +129,14 @@ Mat FindCameraMatrices::getFundamentalMat(const vector<KeyPoint>& keypoints_left
     		keypoints_left_good.push_back(imgpts1_tmp[i]);
     		keypoints_right_good.push_back(imgpts2_tmp[i]);
     		new_matches.push_back(matches[i]);
+    		//TODO support dense reconstruction allowing matches[i] support, now it doesn't work
     	}
     }
 
     cout << matches.size() << " matches before, " << new_matches.size() << " new matches after Fundamental Matrix\n";
     matches = new_matches; //keep only those points who survived the fundamental matrix
-    cout<<endl;
+    cout<<endl;cout<<endl;
+    cout<<"FIRST PRUNED MATCH: matches[0].trainIdx= "<<matches[0].trainIdx<<endl; //debug
 	return F;
 }
 
@@ -233,12 +249,13 @@ bool TestTriangulation(const vector<Point3d>& pcloud, const Matx34d& P, vector<u
 bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& keypoints_left,
 		vector<KeyPoint>& keypoints_right, vector<KeyPoint>& keypoints_left_good,
 		vector<KeyPoint>& keypoints_right_good, Matx34d& P, Matx34d& P1, vector<DMatch>& matches,
-		vector<Point3d>& outCloud){
+		vector<Point3d>& outCloud, vector<CloudPoint>& p_cloud, bool dense,
+		vector<double>& repr_err){
 
 	cout<<endl;cout<<"computing camera matrices: "<<endl;
 
 	Mat F = getFundamentalMat(keypoints_left, keypoints_right, keypoints_left_good,
-			keypoints_right_good, matches);
+			keypoints_right_good, matches, dense);
 
 	if(matches.size() < 100) { // || ((double)imgpts1_good.size() / (double)imgpts1.size()) < 0.25
 				cerr << "not enough inliers after F matrix" << endl;
@@ -299,9 +316,10 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 
 	cout<<"testing P1: "<<endl;
 	vector<Point3d> pointcloud, pointcloud1;
+	vector<CloudPoint> pcloud, pcloud1;
 	Triangulation triangulator;  //TODO distruggere triangulator
-	double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud);
-	double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1);
+	double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud, pcloud, repr_err);
+	double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1, pcloud1, repr_err);
 
 	vector<uchar> tmp_status;
 	int index=1;
@@ -317,9 +335,10 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 	    cout << "Testing P1 "<< endl << Mat(P1) << endl;
 	    index=2;
 	    pointcloud.clear(); pointcloud1.clear();
+	    pcloud.clear(); pcloud1.clear();
 	    //retry triangulation with new P1
-	    double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud);
-	    double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1);
+	    double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud, pcloud, repr_err);
+	    double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1, pcloud1, repr_err);
 	    if (!TestTriangulation(pointcloud,P1,tmp_status) || !TestTriangulation(pointcloud1,P,tmp_status) || reproj_error1 > 100.0 || reproj_error2 > 100.0) {
 
 	    	cout<<"[R1|t2] was incorrect"<<endl;
@@ -338,9 +357,10 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 	    	cout << "Testing P1 "<< endl << Mat(P1) << endl;
 	    	index=3;
 	    	pointcloud.clear(); pointcloud1.clear();
+	    	pcloud.clear(); pcloud1.clear();
 	        //retry triangulation with new P1
-	        double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud);
-	    	double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1);
+	        double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud, pcloud, repr_err);
+	    	double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1, pcloud1, repr_err);
 	    	if (!TestTriangulation(pointcloud,P1,tmp_status) || !TestTriangulation(pointcloud1,P,tmp_status) || reproj_error1 > 100.0 || reproj_error2 > 100.0) {
 
 	    		cout<<"[R2|t1] was incorrect"<<endl;
@@ -352,8 +372,9 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 	    		cout << "Testing P1 "<< endl << Mat(P1) << endl;
 	    		index=4;
 	    		pointcloud.clear(); pointcloud1.clear();
-	    	    double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud);
-	    		double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1);
+	    		pcloud.clear(); pcloud1.clear();
+	    	    double reproj_error1 = triangulator.triangulatePoints(keypoints_left_good, keypoints_right_good, K, Kinv, P, P1, pointcloud, pcloud, repr_err);
+	    		double reproj_error2 = triangulator.triangulatePoints(keypoints_right_good, keypoints_left_good, K, Kinv, P1, P, pointcloud1, pcloud1, repr_err);
 	    		if (!TestTriangulation(pointcloud,P1,tmp_status) || !TestTriangulation(pointcloud1,P,tmp_status) || reproj_error1 > 100.0 || reproj_error2 > 100.0) {
 	    			cout<<"[R2|t2] was incorrect"<<endl;
 	    			cout << "All four matrices incorrect" << endl;
@@ -367,13 +388,30 @@ bool FindCameraMatrices::findCameraMatrices(Mat K, Mat Kinv, vector<KeyPoint>& k
 	cout<<" (1 corresponds to [R1|t1], 4 to [R2|t2] )"<<endl;
 	cout<<endl;cout<<"matrix P1= "<<P1<<endl;
 
+	//cout<<"re-projection error= "<<reproj_error1<<endl;
+
 	//store found 3D points
 	for (unsigned int i=0; i<pointcloud.size(); i++) {
 		outCloud.push_back(pointcloud[i]);
 	}
 
+	//same, but store in CloudPoint (for multiview reconstruction)
+	for(unsigned int j=0; j < pcloud.size(); j++){
+		p_cloud.push_back(pcloud[j]);
+	}
+	cout<<endl;cout<<"CloudPoint now has "<<p_cloud.size()<<" 3D points"<<endl;
+	     //SOLVED BUG-->needed to clear() CloudPoints vector after failed matrix try
+	     //cout<<"WHATCHOUT! it is exactly the number of pruned mathes * 3 ! why?"<<endl;
+
 	return true;
 }
+
+
+
+
+
+
+
 
 
 
