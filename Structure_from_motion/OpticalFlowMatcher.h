@@ -1,4 +1,5 @@
-* OpticalFlowMatcher.h
+/*
+ * OpticalFlowMatcher.h
  *
  *  Created on: 15/set/2016
  *      Author: trev
@@ -99,3 +100,4 @@ private:
 
 
 #endif /* SRC_OPTICALFLOWMATCHER_H_ */
+
