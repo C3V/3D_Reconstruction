@@ -63,8 +63,6 @@ int main(int argc, char** argv){
     vector<Mat> rvecs; //rotation vector
     vector<Mat> tvecs; //translation vector
 
-    //calibrate camera, i.e. found camera matrix, distorion coefficients, rotation and
-    //translation vectors and return the re-projection error
     re_projectionError = calibrator.calibrate(&cameraMatrix, &distCoeffs, &rvecs, &tvecs,
     		                                  boardSize, currentCorners, obj, n_Snaps);
 
@@ -80,19 +78,15 @@ int main(int argc, char** argv){
     //write
     cout<<endl;cout<<"writing K to configuration.xml"<<endl;
     fs<<"K"<<cameraMatrix;
+    cout<<"writing distCoeffs to configuration.xml"<<endl;
+    fs<<"distortion_coeff"<<distCoeffs;
     fs.release();
     cout<<"writing done"<<endl;
 
-    /*//reading
-    Mat K;
-    cout<<"reading"<<endl;
-    fs.open(filename, FileStorage::READ);
-    fs["K"] >>K;
-    cout<<"K= "<<K<<endl<<endl;
-    fs.release();*/
-
     //undistort some image
     Mat distorted = imread("images/storta.jpg");
+    //getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, distorted.size(), 1, distorted.size(), 0);
+    //cout<<"optimal camera matrix: "<<cameraMatrix<<endl;
     namedWindow("distorted", CV_WINDOW_AUTOSIZE);
     imshow("distorted", distorted);
     waitKey(0);
@@ -102,18 +96,8 @@ int main(int argc, char** argv){
     imshow("undistorted", undistorted);
     waitKey(0);
     return 0;
-    /*
-    //show "black points" on undistorted image
-    Mat view, rview, map1, map2;
-    Size imageSize = calibrator.imageSize;
-    initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(),
-                            getOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imageSize, 1,
-                            imageSize, 0), imageSize, CV_16SC2, map1, map2);
-    view = imread("images/storta.jpg");
-    remap(view, rview, map1, map2, INTER_LINEAR);
-    namedWindow("undistorted", CV_WINDOW_AUTOSIZE);
-    imshow("undistorted", rview);
-    waitKey(0);
-    */
 }
+
+
+
 
