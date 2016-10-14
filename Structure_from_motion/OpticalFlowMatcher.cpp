@@ -151,7 +151,7 @@ vector<DMatch> OpticalFlowMatcher::matchFeatures(Mat firstImage, Mat secondImage
     //to make sure coordinates are the same
     /*
     cout << left_points[1] << " first Point2f coordinates for image 1" << endl;
-    /*
+
     cout << right_points[1] << " first Point2f coordinates for image 2" << endl;
 
     cout << endl;
@@ -282,7 +282,7 @@ vector<DMatch> OpticalFlowMatcher::matchFeatures(Mat firstImage, Mat secondImage
     }
 
 
-    cout << matches->size() << " matches found" << endl;
+    //cout << matches->size() << " matches found" << endl;
 
     /*
     //print matches by index
@@ -294,6 +294,13 @@ vector<DMatch> OpticalFlowMatcher::matchFeatures(Mat firstImage, Mat secondImage
     return *matches;
 
 } //matchFeatures
+
+
+
+
+
+
+
 
 
 
