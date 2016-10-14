@@ -297,15 +297,16 @@ bool IncrementalReconstruction::getBaseLineTriangulation(vector<Mat> imgs,
 
 	 cout<<endl;cout<<"***********************************************************"<<endl;
 	            cout<<"*****************Baseline Triangulation********************"<<endl;
+	            cout<<"***********************************************************"<<endl;
 
-	cout<<endl;cout<<"help-->remember to use a baseline which 'make sense': \n"
+/*	cout<<endl;cout<<"help-->remember to use a baseline which 'make sense': \n"
 			"if the cloud you obtain as a baseline is composed by 3D points that \n"
 			"have erroneous coordinates (see Visualization.cpp), although their reprojection\n"
 			"errors are acceptable, everything will never make sense.\n"
 			"In images 7.1, 7.2 and 7.3 the baseline is obtained by 7.2,7.3 but if you look at\n"
 			"the reconstruction from two views, there is only ONE 3D point with correct\n "
 			"coordinates!"<<endl;
-
+*/
 	//Pmats.clear();
 
 	Matx34d P(1, 0, 0, 0, //[I|0]
@@ -314,6 +315,7 @@ bool IncrementalReconstruction::getBaseLineTriangulation(vector<Mat> imgs,
 	    	  );
 	Matx34d P1;
 
+	cout<<endl;
 	cout<<"[using the two images with highest matching between them] "<<endl;
     //remember that if triangulation does not succeed you have to pick another couple!
 	    //Mat firstImage = imgs[max_index1];
@@ -383,7 +385,7 @@ bool IncrementalReconstruction::getBaseLineTriangulation(vector<Mat> imgs,
 	matches_matrix[make_pair(working_view,older_view)] = flipMatches(new_matches); //update the specular
 
     //cout<<"p_cloud[0].imgpt_for_img[0]= "<<p_cloud[0].imgpt_for_img[0]<<endl; //debug
-    cout<<endl;cout<<"now there is a 3D baseline for recovering more cameras later,"<<endl;
+    cout<<endl;cout<<"now there is a 3D baseline for recovering more cameras incrementally,"<<endl;
     cout<<"and every 3D point 'knows' the index of his corresponding projection"<<endl;
     cout<<"on the older_view and working_view image planes"<<endl;
     cout<<"************************************************************************"<<endl;
@@ -548,7 +550,7 @@ bool IncrementalReconstruction::triangulatePointsBetweenViews(vector<Mat> imgs,
 	vector<DMatch> matches = matches_matrix[make_pair(older_view,working_view)];
 
 	//like in FindCameraMatrices.cpp , see getFundamentalMat()
-	cout<<"aligning the two keypoints vectors using matches"<<endl;
+	cout<<endl;cout<<"aligning the two keypoints vectors using matches"<<endl;
 	alignMatches(keypoints_vector[older_view],keypoints_vector[working_view],
 			     matches, &pt_set1, &pt_set2);
 
@@ -732,9 +734,9 @@ bool IncrementalReconstruction::triangulatePointsBetweenViews(vector<Mat> imgs,
 void IncrementalReconstruction::recover3D(vector<Mat> imgs, OpticalFlowMatcher matcher, bool dense,
 		                                  Mat K, Mat distortion_coeff){
 
-    cout<<endl;cout<<"************************"<<endl;
-	           cout<<"recovering 3D points ..."<<endl;
-               cout<<"************************"<<endl;
+    cout<<endl;cout<<"***************************************************************************************"<<endl;
+	           cout<<"****************************recovering 3D points ...***********************************"<<endl;
+               cout<<"***************************************************************************************"<<endl;
 
     vector<vector< KeyPoint> > keypoints_vector(imgs.size() ); //stores keypoints for every view
     map< pair<int,int>,vector<DMatch> > matches_matrix; //stored DMatch vecs for every (i,j)
@@ -746,8 +748,8 @@ void IncrementalReconstruction::recover3D(vector<Mat> imgs, OpticalFlowMatcher m
     cout<<endl;cout<<"[constructMatchesMatrix() executes ...]"<<endl;
     constructMatchesMatrix(imgs, matcher, matches_matrix, keypoints_vector, max_index1, max_index2);
 
-    cout<<endl;cout<<"[not using pruneMatchesBasedOnF(), pruning only using findFundamentalMat()]"<<endl;
-    cout<<"(it seems to filter out too many points computing F two times)"<<endl;
+    //cout<<endl;cout<<"[not using pruneMatchesBasedOnF(), pruning only using findFundamentalMat()]"<<endl;
+    //cout<<"(it seems to filter out too many points computing F two times)"<<endl;
     //pruneMatchesBasedOnF(imgs, keypoints_vector, matches_matrix, dense, f); //discard points not used in F computation
 
     cout<<endl;cout<<"[getBaseLineTriangulation() executes ...]"<<endl;
@@ -914,6 +916,8 @@ void IncrementalReconstruction::recover3D(vector<Mat> imgs, OpticalFlowMatcher m
     Matx34d P_first, P_second;
     P_first = Pmats[max_index1];
     P_second = Pmats[max_index2];
+    cout<<endl;cout<<"*****************************************************************************"<<endl;
+               cout<<"*****************************************************************************"<<endl;
     cout<<endl;cout<<"visualizing CloudPoint results ..."<<endl;
     //display.visualize3DPoints(outCloud, P, P1, K, reproj_err);
     display.visualize3DPoints(outCloud1, P_first, P_second, R_, t_, camera_Rs, camera_ts,
@@ -925,6 +929,12 @@ void IncrementalReconstruction::recover3D(vector<Mat> imgs, OpticalFlowMatcher m
     cout<<"****************************************************************************************"<<endl;
 
 }
+
+
+
+
+
+
 
 
 
