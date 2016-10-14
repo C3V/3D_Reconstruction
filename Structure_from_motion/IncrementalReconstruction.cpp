@@ -921,7 +921,7 @@ void IncrementalReconstruction::recover3D(vector<Mat> imgs, OpticalFlowMatcher m
     cout<<endl;cout<<"visualizing CloudPoint results ..."<<endl;
     //display.visualize3DPoints(outCloud, P, P1, K, reproj_err);
     display.visualize3DPoints(outCloud1, P_first, P_second, R_, t_, camera_Rs, camera_ts,
-    		                  K, reproj_err);
+    		                  K, Pmats, reproj_err);
 
     cout<<endl;
     cout<<"****************************************************************************************"<<endl;
@@ -929,6 +929,12 @@ void IncrementalReconstruction::recover3D(vector<Mat> imgs, OpticalFlowMatcher m
     cout<<"****************************************************************************************"<<endl;
 
 }
+
+
+
+
+
+
 
 
 
