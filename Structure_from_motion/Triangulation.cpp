@@ -67,7 +67,9 @@ double Triangulation::triangulatePoints(vector<KeyPoint> keypoints1, //first "pr
 										Mat Kinv, //K inverse
 										Matx34d P, //first camera matrix
 										Matx34d P1,
-										vector<Point3d>& pointcloud //store the 3D points
+										vector<Point3d>& pointcloud, //store the 3D points
+										vector<CloudPoint>& pcloud,
+										vector<double>& reproj_error
 										){ //second camera matrix
 	/*
 	 * we are using NORMALIZED camera matrices P=[I|0] and P1=[R|t] in which
@@ -80,7 +82,7 @@ double Triangulation::triangulatePoints(vector<KeyPoint> keypoints1, //first "pr
 	 */
 
 	cout<<endl;cout << "Triangulating..."<<endl;
-	vector<double> reproj_error;
+	//vector<double> reproj_error;
 	unsigned int size = keypoints1.size();
 	Mat_<double> KP1 = K * Mat(P1);  //de-normalize, will be used in re-projection
 	//cout<<"KP1= "<<KP1<<endl;
@@ -126,6 +128,10 @@ double Triangulation::triangulatePoints(vector<KeyPoint> keypoints1, //first "pr
 		//cout<<"rpj_err= "<<reprj_err<<endl; //show re-projection error
 
 		pointcloud.push_back(Point3d(X_homogenous(0),X_homogenous(1),X_homogenous(2))); //store 3D point
+		CloudPoint cp;
+		cp.pt = Point3d(X_homogenous(0),X_homogenous(1),X_homogenous(2)); //store 3D point in cloud
+		cp.reprojection_error = reprj_err;  //store re-projection error
+		pcloud.push_back(cp); //store new CloudPoint
 
 	}
 
@@ -133,11 +139,18 @@ double Triangulation::triangulatePoints(vector<KeyPoint> keypoints1, //first "pr
 	Scalar mean_error = mean(reproj_error);
 
 	cout<<endl;cout<<"-------------------------------------------------------------------------------------------"<<endl;
-	cout<<"Done ("<<pointcloud.size()<<" points, " <<" mean re-projection err = " << mean_error[0] << ")."<< endl;
+	//cout<<"Done ("<<pointcloud.size()<<" points, " <<" mean re-projection err = " << mean_error[0] << ")."<< endl;
+	cout<<"Done ("<<pcloud.size()<<" points, " <<" mean re-projection err = " << mean_error[0] << ")."<< endl;
 
 	return mean_error[0];
 
 }
+
+
+
+
+
+
 
 
 
