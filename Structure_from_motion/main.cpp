@@ -48,6 +48,7 @@ int main(int argc, char** argv){
 	cout<<"distortion_coeff= "<<distortion_coeff<<endl;
 	fs.release();
 
+	//use camera as an input
 	vector<Mat> new_images;
 	{
 		VideoCapture cap(1); // 0 is the laptop webcam
