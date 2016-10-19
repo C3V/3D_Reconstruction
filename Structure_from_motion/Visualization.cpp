@@ -34,8 +34,8 @@ void Visualization1::visualize3DPoints(vector<Point3d> points, Matx34d P, Matx34
 		if(points[i].x != points[i].x || isnan(points[i].x) ||
 		   points[i].y != points[i].y || isnan(points[i].y) ||
 		   points[i].z != points[i].z || isnan(points[i].z) ||
-		   points[i].z <0 || fabsf(points[i].x) > 10.0 || fabsf(points[i].y) > 10.0 ||
-		   fabsf(points[i].z) > 10.0 || repr_err[i] > 8.0){  //N.B. re-projection error
+		   points[i].z <0 || fabsf(points[i].x) > 100.0 || fabsf(points[i].y) > 100.0 ||
+		   fabsf(points[i].z) > 100.0 || repr_err[i] > 4.0){  //N.B. re-projection error
 			continue;
 		}
 
