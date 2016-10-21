@@ -9,7 +9,8 @@ using CloudPoint_To_PCD_Writer.
 Then the .pcd file can be used to open the cloud with Meshlab and obtain a rough surface from points
 reconstruction.
 
-Code inspired by the book "Mastering OpenCV with Practical Computer Vision Projects", in particular the work of Roy Shilkrot on chapter 4.
+Structure_from_motion code is based on the book "Mastering OpenCV with Practical Computer 
+Vision Projects", in particular the work of Roy Shilkrot on chapter 4.
 
 
 
