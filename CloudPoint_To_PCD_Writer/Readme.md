@@ -13,6 +13,7 @@ Change directory to build and run ccmake with the src directory as source, set v
 like Opencv_Found to On and OpenCV_Dir to the build directory of OpenCV (the one in which
 you built Opencv while installng the first time), and maybe something else, not sure.
 Then generate and run make.
+
 If you want to import it to Eclipse, instead of giving simple ccmake command just type
 $cmake -G "Eclipse CDT4 - Unix Makefiles" <path_to_src_directory_of_the_project>
 then set the variables as before and run make.
