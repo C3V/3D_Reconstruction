@@ -15,7 +15,7 @@ you built Opencv while installng the first time), and maybe something else, not 
 Then generate and run make.
 
 If you want to import it to Eclipse, instead of giving simple ccmake command just type
-$ccmake -G "Eclipse CDT4 - Unix Makefiles" <path_to_src_directory_of_the_project>
+$ccmake -G "Eclipse CDT4 - Unix Makefiles" path_to_src_directory_of_the_project
 then set the variables as before and run make.
 Then open Eclipse and import existing project, let the indexer do his work, compile and run.
 The project must have one or more .xml files as input (set them in Run Configurations).
